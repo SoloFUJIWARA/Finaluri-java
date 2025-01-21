@@ -14,7 +14,7 @@ import lombok.extern.java.Log;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@Log // Lombok's built-in logging
+@Log
 public class MainApp extends Application {
     private PieChart pieChart;
     private ProductDAO productDAO;

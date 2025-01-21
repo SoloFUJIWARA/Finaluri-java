@@ -182,11 +182,22 @@ public class MainApp extends Application {
 
     private void updatePieChart() {
         pieChart.getData().clear();
-        carDAO.getAllCars().forEach(car -> {
-            double totalValue = car.getPrice() * car.getQuantity();
-            String label = car.getBrand() + " " + car.getModel() + " (ID: " + car.getId() + ") - " + totalValue + " $";
-            pieChart.getData().add(new PieChart.Data(label, totalValue));
-        });
+
+        int totalQuantity = carDAO.getAllCars().stream()
+                .mapToInt(Car::getQuantity)
+                .sum();
+
+        if (totalQuantity > 0) {
+            carDAO.getAllCars().forEach(car -> {
+                double totalValue = car.getPrice() * car.getQuantity();
+                double quantityPercentage = (double) car.getQuantity() / totalQuantity * 100;
+                String label = car.getBrand() + " " + car.getModel() + " (ID: " + car.getId() + ") - "
+                        + totalValue + " $ (" + String.format("%.2f", quantityPercentage) + "%)";
+                pieChart.getData().add(new PieChart.Data(label, totalValue));
+            });
+        } else {
+            pieChart.getData().add(new PieChart.Data("No cars available", 0));
+        }
     }
 
     private void clearFields(TextField... fields) {

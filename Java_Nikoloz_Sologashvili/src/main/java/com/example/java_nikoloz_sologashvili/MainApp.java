@@ -2,7 +2,6 @@ package com.example.java_nikoloz_sologashvili;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
@@ -30,14 +29,13 @@ public class MainApp extends Application {
         quantityField.setPromptText("Enter product quantity");
         TextField updateIdField = new TextField();
         updateIdField.setPromptText("Enter product ID to update");
+        TextField readIdField = new TextField();
+        readIdField.setPromptText("Enter product ID to read/delete");
 
         Button insertButton = new Button("Insert Product");
         Button deleteButton = new Button("Delete Product");
         Button updateButton = new Button("Update Product");
         Button readButton = new Button("Read Product");
-
-        TextField readIdField = new TextField();
-        readIdField.setPromptText("Enter product ID to read");
 
         Label feedbackLabel = new Label();
         Label readResultLabel = new Label();
@@ -86,7 +84,6 @@ public class MainApp extends Application {
             String name = nameField.getText();
             String priceText = priceField.getText();
             String quantityText = quantityField.getText();
-
             if (!idText.isEmpty() && !name.isEmpty() && !priceText.isEmpty() && !quantityText.isEmpty()) {
                 try {
                     int id = Integer.parseInt(idText);
@@ -132,7 +129,8 @@ public class MainApp extends Application {
         });
 
         VBox layout = new VBox(
-                10,
+                15,
+                new Label("Insert New Product:"),
                 nameField,
                 priceField,
                 quantityField,
@@ -140,7 +138,7 @@ public class MainApp extends Application {
                 new Label("Update Product:"),
                 updateIdField,
                 updateButton,
-                new Label("Delete Product:"),
+                new Label("Delete or Read Product:"),
                 readIdField,
                 deleteButton,
                 readButton,
@@ -149,19 +147,28 @@ public class MainApp extends Application {
                 pieChart
         );
         layout.setPadding(new Insets(20));
-        updatePieChart();
+
+        nameField.setPrefWidth(300);
+        priceField.setPrefWidth(300);
+        quantityField.setPrefWidth(300);
+        updateIdField.setPrefWidth(300);
+        readIdField.setPrefWidth(300);
 
         Scene scene = new Scene(layout, 500, 700);
         primaryStage.setScene(scene);
         primaryStage.setTitle("Product Management with CRUD Operations");
         primaryStage.show();
+
+        updatePieChart();
     }
 
     private void updatePieChart() {
         pieChart.getData().clear();
         productDAO.getAllProducts().forEach(product -> {
             double totalValue = product.getPrice() * product.getQuantity();
-            pieChart.getData().add(new PieChart.Data(product.getName() + " - " + totalValue, totalValue));
+            String label = product.getName() + " (ID: " + product.getId() + ") - " + totalValue+ " $ ";
+            pieChart.getData().add(new PieChart.Data(label, totalValue));
         });
     }
+
 }
